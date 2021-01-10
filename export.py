@@ -22,9 +22,9 @@ formatted = '[' + '], ['.join(fields) + ']'
 properties = []
 c.execute('select ' + formatted + 'from property')
 for row in c.fetchall():
-    data = dict(row)
-    properties.append(data)
+    line = '''\t'''.join(str(x) for x in row).replace('"', '\"')
+    properties.append(line)
 
 with open('javascript/properties.js', 'w') as outfile:
-    pstring = json.dumps(properties)
-    outfile.write("const properties = " + pstring)
+    outfile.write('const fields = ["' + "\", \"".join(fields) + '"]\r\n') 
+    outfile.write('const properties = ["' + '\",\r\n\"'.join(properties) + '\"]')
