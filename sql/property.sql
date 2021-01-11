@@ -6,7 +6,7 @@ create table property
 [BLOCK], varchar(500),
 [LOT], varchar(500),
 [UNIT], varchar(500),
-[PARCEL ID], varchar(500) primary key,
+[PARCEL ID], varchar(500),
 [PCC], varchar(500),
 [PCC DESCRIPT], varchar(500),
 [ACCOUNT], int,
