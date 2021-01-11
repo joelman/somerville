@@ -18,9 +18,9 @@ db.row_factory = sqlite3.Row
 c = db.cursor()
 
 addresses = []
-c.execute('select distinct [HOUSE NO], [STREET], lat, lon from property order by [street], [HOUSE NO]')
+c.execute('select distinct [HOUSE NO], [STREET], lat, lon from property where street <> 0 and lat is not null order by [street], [HOUSE NO]')
 for row in c.fetchall():
-    line = '%s\t%s' % (row['HOUSE NO'], row['STREET'])
+    line = '%s\t%s\t%s\t%s' % (row['HOUSE NO'], row['STREET'], row['lat'], row['lon'])
     addresses.append(line);
     
 with open('javascript/addresses.js', 'w') as outfile:
