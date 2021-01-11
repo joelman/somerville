@@ -26,7 +26,7 @@ for row in c.fetchall():
     
     address = address.replace(' ', '+')
 
-    addressurl = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=' + address + '&benchmark=4&format=json'
+    addressurl = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=' + address + '&benchmark=9&format=json'
     with urllib.request.urlopen(addressurl) as url:
         data = json.loads(url.read().decode())
 
