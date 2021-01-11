@@ -13,28 +13,10 @@ mymap.on('click', function (e) {
     //console.log(e);
     var point = L.latLng(e.latlng.lat, e.latlng.lng);
 
-    /*
-    var length = addresses.length;
-    var dist = 1000;
-    var match = {};
-    for(var i = 0; i < length; i++) {
-    var address = addresses[i];
-    var a = L.latLng(address.lat, address.lon);
-    var d = mymap.distance(point, a)
-    if(d < dist) {
-    dist = d;
-    match = address;
-    //console.log(dist)
-    }
-    }
-
-    //console.log(match);
-     */
-
     var script = document.createElement('script');
-    script.src = `https://nominatim.openstreetmap.org/reverse?lat=${point.lat}&lon=${point.lng}&format=json&json_callback=lookup`
+    script.src = `https://nominatim.openstreetmap.org/reverse?lat=${point.lat}&lon=${point.lng}&format=json&json_callback=lookup`;
 
-        document.querySelector('head').appendChild(script);
+    document.querySelector('head').appendChild(script);
 });
 
 function lookup(response) {
@@ -60,9 +42,9 @@ function lookup(response) {
 
                 if (row['HOUSE NO'] == n[i] && row['STREET'] == street)
                     return true;
-
-                return false;
             }
+
+            return false;
     });
 
     console.log(prop);
