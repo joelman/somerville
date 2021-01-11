@@ -14,18 +14,28 @@
       body { font-family: Arial, Helvetica }
       h1 { font-size: 2em; }
       h2 { font-size: 1.5em; }
-      #mapid { width: 80em; height: 60em; }
+      #mapid { width: 80em; height: 60em; display: inline-block; border: solid thin gray; }
+      #output {
+	  display: inline-block;
+	  vertical-align: top;
+	  padding: 1em;
+	  visibility: hidden;
+	  border: solid thin gray;
+      }
     </style>
   </head>
   <body>
     <h1>City of Somerville</h1>
     <div id="mapid"></div>
-	
+    <div id="output"></div>
+    <p>
+      <a href="mailto:joelman@gmail.com">[contact]</a>
+    </p>
+    
     <script src="../javascript/token.js"></script>
     <script src="../javascript/addresses.js"></script>
     <script src="../javascript/properties.js"></script>
     <script src="../javascript/map.js"></script>
 
-    <a href="mailto:joelman@gmail.com">[contact]</a>
-  </body>
+</body>
  </html>

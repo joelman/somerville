@@ -1,4 +1,4 @@
-var mymap = L.map('mapid').setView([42.3955522, -71.1387673], 13);
+var mymap = L.map('mapid').setView([42.3949919,-71.1045912], 14);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery Â© <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -9,47 +9,34 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: token
 }).addTo(mymap);
 
-mymap.on('click', function (e) {
-    //console.log(e);
+function lookup(e) {
+
+//    console.log(e);
     var point = L.latLng(e.latlng.lat, e.latlng.lng);
 
-    var script = document.createElement('script');
-    script.src = `https://nominatim.openstreetmap.org/reverse?lat=${point.lat}&lon=${point.lng}&format=json&json_callback=lookup`;
+    var dist = 1000
+    var match = {}
+    var length = addresses.length
 
-    document.querySelector('head').appendChild(script);
-});
-
-function lookup(response) {
-    //console.log(response)
-    var number = response.address.house_number;
-    var street = response.address.road;
-
-    if (!number || !street) {
-        console.log(response);
-        return;
+    for(var i = 0; i < length; i++) {
+	var address = addresses[i];
+	var a = L.latLng(address.lat, address.lon)
+	var d = mymap.distance(point, a)
+	if(d < dist) {
+	    dist = d;
+	    match = address;
+	}
     }
 
-    var abbrevs = [['Boulevard', 'BLVD'], ['Street', 'ST'], ['Avenue', 'AVE'], ['Terrace', 'TERR'], ['Road', 'RD']];
-
-    abbrevs.map(x => street = street.replace(x[0], x[1]))
-    street = street.toUpperCase();
-
-    console.log(`${number} ${street}`);
-
-    var prop = properties.filter(function (row) {
-        var n = number.split(';')
-            for (var i = 0; i < n.length; i++) {
-
-                if (row['HOUSE NO'] == n[i] && row['STREET'] == street)
-                    return true;
-            }
-
-            return false;
-    });
-
-    console.log(prop);
-
+    var box = document.getElementById('output')
+    box.innerHTML = `${match.number} ${match.street}`;
+    box.style.visibility = 'visible'
+    
+    var props = properties.filter(x => x['HOUSE NO'] == match.number && x['STREET'] == match.street)
+    console.log(props)
 }
+
+mymap.on('click', lookup);
 
 var addresses = [];
 var properties = [];
@@ -66,7 +53,7 @@ const draw = async() => {
             lon: p[3]
         };
         addresses.push(a);
-        /*
+
         var circle = L.circle([a.lat, a.lon], {
         color: 'blue',
         fillColor: 'blue',
@@ -74,11 +61,10 @@ const draw = async() => {
         radius: 1
         });
 
-
         circle.bindPopup(`${a.number} ${a.street}`).openPopup();
+	circle.on('click', lookup);
 
         circle.addTo(mymap);
-         */
     }
 
     console.log(`loaded ${addresses.length} addresses.`)
