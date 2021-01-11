@@ -9,35 +9,36 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: token
 }).addTo(mymap);
 
+var addresses = [];
+var properties = [];
 
 const draw = async() => {
-	var p = [];
+
+    var length = addressRows.length;
+    for(var i = 0; i < length; i++) {
+	var p = addressRows[i].split('\t');
+	var a = { number: p[0], street: p[1], lat: p[2], lon: p[3] };
+	addresses.push(a);
+    }
+    console.log(`loaded ${addresses.length} addresses.`)
+}
+
+const load = async() => {
+    
+    var length = propertyRows.length;
+
+    for(var i = 0; i < length; i++) {
+	var x = propertyRows[i].split('\t')
 	
-	var length = properties.length;
-	var seen = [];
-	for(var i = 0; i < length; i++) {
-		var x = properties[i].split('\t')
-		
-		var plot = {};
-		for(var f = 0; f < fields.length; f++) {
-			plot[fields[f]] = x[f];
-		}
-		
-		if(plot.lat == 'None')
-			continue;
-		
-		/*
-		var address = `${plot['HOUSE NO']} ${plot['STREET']}`;
-		if(seen.includes(address))
-			continue;
-			
-		seen.push(address);
-		*/
-		
-		p.push(plot);
+	var plot = {};
+	for(var f = 0; f < fields.length; f++) {
+	    plot[fields[f]] = x[f];
 	}
-	
-	console.log(p.length);
+
+	properties.push(plot);
+    }
+    console.log(`loaded ${properties.length} properties.`)
 }
 
 draw();
+load();
