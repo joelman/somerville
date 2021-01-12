@@ -1,3 +1,4 @@
 *.db3
 *~
 *.csv
+.DS_Store
