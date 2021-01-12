@@ -28,9 +28,7 @@ function lookup(e) {
 	}
     }
 
-    var box = document.getElementById('output')
-    box.innerHTML = `${match.number} ${match.street}`;
-    box.style.visibility = 'visible'
+    log(`${match.number} ${match.street}`);
     
     var props = properties.filter(x => x['HOUSE NO'] == match.number && x['STREET'] == match.street)
     console.log(props)
@@ -67,8 +65,7 @@ const draw = async() => {
         circle.addTo(mymap);
     }
 
-    console.log(`loaded ${addresses.length} addresses.`)
-
+    log(`loaded ${addresses.length} addresses.`)
 }
 
 const load = async() => {
@@ -85,7 +82,14 @@ const load = async() => {
 
         properties.push(plot);
     }
-    console.log(`loaded ${properties.length} properties.`)
+    log(`loaded ${properties.length} properties.`)
+}
+
+function log(message) {
+    var box = document.getElementById('output')
+    box.innerHTML += `<p>${message}</p>`
+    box.style.visibility = 'visible'
+
 }
 
 draw();
