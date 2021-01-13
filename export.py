@@ -18,7 +18,9 @@ db.row_factory = sqlite3.Row
 c = db.cursor()
 
 addresses = []
-c.execute('select distinct [HOUSE NO], [STREET], lat, lon from property where street <> 0 and lat is not null order by [street], [HOUSE NO]')
+sql = 'select distinct [HOUSE NO], [STREET], lat, lon from property where street <> 0 and lat is not null order by [street], [HOUSE NO]'
+
+c.execute(sql)
 for row in c.fetchall():
     line = '%s\t%s\t%s\t%s' % (row['HOUSE NO'], row['STREET'], row['lat'], row['lon'])
     addresses.append(line);
@@ -29,7 +31,7 @@ with open('javascript/addresses.js', 'w') as outfile:
 formatted = '[' + '], ['.join(fields) + ']'
 
 properties = []
-c.execute('select ' + formatted + 'from property order by [street], [HOUSE NO]')
+c.execute('select ' + formatted + ' from property p where [fiscal_year] = (select max([fiscal_year]) from property where [parcel id] = p.[parcel id]) order by [street], [HOUSE NO]')
 for row in c.fetchall():
     line = '''\t'''.join(str(x) for x in row).replace('"', '\\"')
     properties.append(line)
