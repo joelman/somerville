@@ -12,8 +12,11 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 var red = 8388608;
 var green = 800;
 
-var minVal = 900;
-var maxVal = 1838600;
+var minPrice = 100000000;
+var maxPrice = 0;
+
+var minValue = 100000000;
+var maxValue = 0;
 
 function lookup(e) {
 
@@ -51,31 +54,57 @@ const draw = async() => {
     for (var i = 0; i < length; i++) {
         var p = addressRows[i].split('\t');
         var a = {
-	    price: p[0],
-	    value: p[1],
+	    price: parseInt(p[0]),
+	    value: parseInt(p[1]),
             number: p[2],
             street: p[3],
-            lat: p[4],
-            lon: p[5]
+            lat: parseFloat(p[4]),
+            lon: parseFloat(p[5])
         };
-		
-	var circle = L.circle([a.lat, a.lon], {
-        color: 'blue',
-        fillColor: 'blue',
-        fillOpacity: 1,
-        radius: 1,
-		lat: a.lat,
-		lon: a.lon
+
+	if(a.price > maxPrice) {
+	    maxPrice = a.price;
+	}
+
+	if(a.value > maxValue) {
+	    maxValue = a.value;
+	}
+
+	if(a.price < minPrice && a.price > 0) {
+	    minPrice = a.price;
+	}
+
+	if(a.value < minValue && a.value > 0) {
+	    minValue = a.value;
+	}
+	
+        addresses.push(a);
+    }	
+
+	log(`minPrice: ${minPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
+	log(`maxPrice: ${maxPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
+
+	log(`minValue: ${minValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
+	log(`maxValue: ${maxValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
+	
+    for (var i = 0; i < length; i++) {
+
+	var address = addresses[i]
+	
+	var circle = L.circle([address.lat, address.lon], {
+            color: 'blue',
+            fillColor: 'blue',
+            fillOpacity: 1,
+            radius: 1,
+	    lat: address.lat,
+	    lon: address.lon
         });
 		
         // circle.bindPopup(`${a.number} ${a.street}`).openPopup();
-		circle.bindPopup(hi).openPopup();
-		circle.on('click', lookup);
+	circle.bindPopup(hi).openPopup();
+	circle.on('click', lookup);
 
         circle.addTo(mymap);
-		
-        addresses.push(a);
-        
     }
 
     log(`loaded ${addresses.length} addresses.`)
