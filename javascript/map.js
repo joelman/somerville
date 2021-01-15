@@ -51,14 +51,15 @@ const draw = async() => {
     for (var i = 0; i < length; i++) {
         var p = addressRows[i].split('\t');
         var a = {
-            number: p[0],
-            street: p[1],
-            lat: p[2],
-            lon: p[3]
+	    price: p[0],
+	    value: p[1],
+            number: p[2],
+            street: p[3],
+            lat: p[4],
+            lon: p[5]
         };
 		
-		
-		var circle = L.circle([a.lat, a.lon], {
+	var circle = L.circle([a.lat, a.lon], {
         color: 'blue',
         fillColor: 'blue',
         fillOpacity: 1,
