@@ -13,13 +13,13 @@
     <style>
       body { font-family: Arial, Helvetica }
       h1 { font-size: 2em; }
-      h2 { font-size: 1.5em; }
+      h2 { font-size: 1em; }
+      td { padding: .5em; }
       #mapid { width: 80em; height: 60em; display: inline-block; border: solid thin gray; }
-      #output {
+      #rightcontainer {
 	  display: inline-block;
 	  vertical-align: top;
 	  padding: .5em;
-	  visibility: hidden;
 	  border: solid thin gray;
       }
     </style>
@@ -27,7 +27,12 @@
   <body>
     <h1>City of Somerville</h1>
     <div id="mapid"></div>
-    <div id="output"></div>
+    <div id="rightcontainer">
+      <div id="controls">
+	<table id="legend"></table>
+      </div>
+      <div id="output"></div>
+    </div>
     <p>
       <a href="mailto:joelman@gmail.com">[contact]</a>
     </p>
