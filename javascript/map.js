@@ -84,6 +84,14 @@ const draw = async() => {
 	selected.push(checks[i].checked);
     }
 
+    let zoneChecks = document.getElementsByClassName('zoneCheck');
+    let zones = [];
+    for(var i = 0; i < zoneChecks.length; i++) {
+	if(zoneChecks[i].checked) {
+	    zones.push(zoneChecks[i].value);
+	}
+    }
+    console.log(zones)
 //    console.log(selected);
     
     let length = addresses.length;
@@ -91,6 +99,10 @@ const draw = async() => {
 	
 	var address = addresses[i]
 
+	if(!zones.includes(address.zoning)) {
+	    continue;
+	}
+	
 	var color = 0;
 
 	for(var c = step; c < scale; c += step) {
@@ -187,6 +199,8 @@ function hi(e) {
 }
 
 const load = async() => {
+
+    let zones = [];
     
     let length = addressRows.length;
     for (var i = 0; i < length; i++) {
@@ -196,10 +210,22 @@ const load = async() => {
 	    value: parseInt(p[1]),
             number: p[2],
             street: p[3],
-            lat: parseFloat(p[4]),
-            lon: parseFloat(p[5])
+	    zoning: p[4],
+            lat: parseFloat(p[5]),
+            lon: parseFloat(p[6])
         };
 
+	if(a.zoning == '') {
+	    a.zoning = 'Blank';
+	}
+	
+	var exists = zones.filter(x => x.zone == a.zoning);
+	if(exists.length) {
+	    exists[0].count++;
+	} else {
+	    zones.push({ zone: a.zoning, count: 1 });
+	}
+	
 	if(a.price > maxPrice) {
 	    maxPrice = a.price;
 	}
@@ -217,8 +243,10 @@ const load = async() => {
 	}
 	
         addresses.push(a);
-    }	
+    }
 
+    addZones(zones);
+	
     draw();
     
     log(`minPrice: ${minPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
@@ -239,30 +267,45 @@ const load = async() => {
         }
 
         properties.push(plot);
-		/*
-		if(plot.lat == "None")
-			continue;
-		
-		var key = `${plot.lat},${plot.lon}`
-		if(plotted.includes(key))
-			continue;
-		
-		var circle = L.circle([plot.lat, plot.lon], {
-        color: 'blue',
-        fillColor: 'blue',
-        fillOpacity: 1,
-        radius: 1
-        });
-		
-        circle.bindPopup(`${plot.HOUSE_NO} ${plot.STREET}`).openPopup();
-		circle.on('click', lookup);
-
-        circle.addTo(mymap);
-		
-		plotted.push(key);
-		*/
     }
     log(`loaded ${properties.length} properties.`)
+}
+
+const addZones = async(zones) => {
+    var table = document.getElementById('zones')
+
+    let thead = table.createTHead();
+    let row = thead.insertRow();
+    let text = document.createTextNode("Zoning");
+    let th = document.createElement("th");
+    th.appendChild(text);
+    th.colSpan = 2;
+    row.appendChild(th);
+
+//    zones = zones.sort();
+    
+    for(let i = 0; i < zones.length; i++) {
+	let row = table.insertRow();
+	let c1 = document.createElement('td');
+
+	let check = document.createElement("INPUT");
+	check.setAttribute("type", "checkbox");
+	check.setAttribute('id', `zone_${i}`);
+	check.setAttribute('class', 'zoneCheck');
+	check.value = zones[i].zone;
+	check.checked = zones[i].zone == 'RESIDENCE';;
+	check.addEventListener("click", draw);
+	c1.appendChild(check);
+	row.appendChild(c1);
+
+	let c2 = document.createElement('td')
+
+	let text = `${zones[i].zone} (${zones[i].count})`;;
+	
+	let t = document.createTextNode(text);
+	c2.appendChild(t);
+	row.appendChild(c2);
+    }
 }
 
 function log(message) {
