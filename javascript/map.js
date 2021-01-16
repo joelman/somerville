@@ -11,8 +11,8 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 
 var markers = [];
 
-var scale = 1000000;
-var step = 100000;
+var scale = 2000000;
+var step = 200000;
 
 // https://colordesigner.io/gradient-generator
 var colors = ['#0000ff', '#9900e2', '#cf00c1', '#f100a0', '#ff0080', '#ff0063', '#ff004a', '#ff3133', '#ff601c', '#ff8000']
@@ -23,7 +23,7 @@ function initControls() {
 
     let thead = table.createTHead();
     let row = thead.insertRow();
-    let text = document.createTextNode("Price");
+    let text = document.createTextNode("Value");
     let th = document.createElement("th");
     th.appendChild(text);
     th.colSpan = 2;
@@ -94,7 +94,12 @@ const draw = async() => {
 	var color = 0;
 
 	for(var c = step; c < scale; c += step) {
-	    if(address.price >= c) {
+	    var value = address.value;
+	    if(address.price > value) {
+		value = address.price;
+	    }
+	    
+	    if(value >= c) {
 		color++;
 	    }
 	}
