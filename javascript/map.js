@@ -20,6 +20,21 @@ var bostonLayer = L.geoJSON(boston, { style: style }).addTo(mymap);
 style.color = "#faa";
 
 var wardsLayer = L.geoJSON(wards, { style: style }).addTo(mymap);
+
+wardsLayer.eachLayer(function(layer) {
+    var feature = layer.feature;
+    var html = `<strong>WARD ${feature.properties.Ward}`;
+    console.log(label);
+
+    var label = L.marker(layer.getBounds().getCenter(), {
+	icon: L.divIcon({
+            className: 'label',
+            html: html,
+            iconSize: [100, 40]
+	})
+    }).addTo(mymap);
+});
+
 var markers = [];
 
 var scale = 2000000;
