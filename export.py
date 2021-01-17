@@ -10,7 +10,7 @@ fields = [
     'OWNER ADD', 'OWNER CITY', 'OWNER STATE', 'OWNER ZIP', 'SALE PRICE', 'PARCEL VAL', 'LAND VAL',
     'IMPROVE VAL','SQFT', 'STYLE DESCRIP', 'STORIES', 'WALL TYPE 1', 'WALL TYPE 2',
     'HEAT TYPE', 'FUEL TYPE', 'AC TYPE', 'GROSS AREA', 'LIVING AREA', 'ROOMS',
-    'BEDROOM', 'BATH', 'BATH DESCRIP', 'KITCHEN DESCRIP',
+    'BEDROOM', 'BATH', 'BATH DESCRIP', 'KITCHEN DESCRIP', 'WARD',
     'PERCENT GOOD', 'GRADE DESCRIP', 'YEAR', 'RESX FLAG', 'ZONE DESP', 'EXEMPT AMT', 'TAX VALUE',
     'lat', 'lon'
 ];
@@ -19,11 +19,11 @@ db.row_factory = sqlite3.Row
 c = db.cursor()
 
 addresses = []
-sql = 'select sum([sale price]) price, sum([parcel val]) value, [HOUSE NO], [STREET], [ZONE DESP], lat, lon from property p where [fiscal_year] = (select max([fiscal_year]) from property where [parcel id] = p.[parcel id]) and street <> 0 and lat is not null group by [house no], [street], [zone desp], lat, lon order by [street], [HOUSE NO]'
+sql = 'select sum([sale price]) price, sum([parcel val]) value, [HOUSE NO], [STREET], [ZONE DESP], [WARD], lat, lon from property p where [fiscal_year] = (select max([fiscal_year]) from property where [parcel id] = p.[parcel id]) and street <> 0 and lat is not null group by [house no], [street], [zone desp], lat, lon order by [street], [HOUSE NO]'
 
 c.execute(sql)
 for row in c.fetchall():
-    line = '%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row['price'], row['value'], row['HOUSE NO'], row['STREET'], row['ZONE DESP'], row['lat'], row['lon'])
+    line = '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % (row['price'], row['value'], row['HOUSE NO'], row['STREET'], row['ZONE DESP'], row['WARD'], row['lat'], row['lon'])
     addresses.append(line);
     
 with open('javascript/addresses.js', 'w') as outfile:

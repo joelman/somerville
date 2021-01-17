@@ -9,14 +9,17 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: token
 }).addTo(mymap);
 
-var myStyle = {
+var style = {
     "color": "#aaa",
     "weight": 2.5,
     "fillOpacity": 0.0
 };
 
-var bostonLayer = L.geoJSON(boston, { style: myStyle }).addTo(mymap);
+var bostonLayer = L.geoJSON(boston, { style: style }).addTo(mymap);
 
+style.color = "#faa";
+
+var wardsLayer = L.geoJSON(wards, { style: style }).addTo(mymap);
 var markers = [];
 
 var scale = 2000000;
@@ -31,11 +34,21 @@ function initControls() {
 
     let thead = table.createTHead();
     let row = thead.insertRow();
-    let text = document.createTextNode("Value");
     let th = document.createElement("th");
-    th.appendChild(text);
-    th.colSpan = 2;
+    
+    let button = document.createElement('button');
+    button.innerText = 'toggle';
+    button.id = 'toggle_value';
+    button.addEventListener("click", toggle);
+    th.appendChild(button);
+
     row.appendChild(th);
+
+    let th2 = document.createElement("th");
+    let text = document.createTextNode("Value");
+    th2.appendChild(text);
+    
+    row.appendChild(th2);
 
     for(let i = 0; i < scale; i += step) {
 	let row = table.insertRow();
@@ -45,6 +58,7 @@ function initControls() {
 	let check = document.createElement("INPUT");
 	check.setAttribute("type", "checkbox");
 	check.setAttribute('id', `index_${(i/step)}`);
+	check.setAttribute('name', 'value');
 	check.setAttribute('class', 'rangeCheck');
 //	check.checked = true;
 	check.addEventListener("click", draw);
@@ -99,8 +113,15 @@ const draw = async() => {
 	    zones.push(zoneChecks[i].value);
 	}
     }
-    console.log(zones)
-//    console.log(selected);
+
+    let wardChecks = document.getElementsByClassName('wardCheck');
+    let wards = [];
+    for(var i = 0; i < wardChecks.length; i++) {
+	var check = wardChecks[i];
+	if(check.checked) {
+	    wards.push(check.value);
+	}
+    }
     
     let length = addresses.length;
     for (var i = 0; i < length; i++) {
@@ -108,6 +129,10 @@ const draw = async() => {
 	var address = addresses[i]
 
 	if(!zones.includes(address.zoning)) {
+	    continue;
+	}
+
+	if(!wards.includes(address.ward)) {
 	    continue;
 	}
 	
@@ -203,9 +228,22 @@ function hi(e) {
 	
 }
 
+function toggle(e) {
+    var name = e.target.id.replace('toggle_', '');
+
+    var checks = document.getElementsByName(name);
+
+    for(var i = 0; i < checks.length; i++) {
+	checks[i].checked = !checks[i].checked;
+    }
+
+    draw();
+}
+
 const load = async() => {
 
     let zones = [];
+    let wards = [];
     
     let length = addressRows.length;
     for (var i = 0; i < length; i++) {
@@ -216,8 +254,9 @@ const load = async() => {
             number: p[2],
             street: p[3],
 	    zoning: p[4],
-            lat: parseFloat(p[5]),
-            lon: parseFloat(p[6])
+	    ward: p[5],
+            lat: parseFloat(p[6]),
+            lon: parseFloat(p[7])
         };
 
 	if(a.zoning == '') {
@@ -229,6 +268,10 @@ const load = async() => {
 	    exists[0].count++;
 	} else {
 	    zones.push({ zone: a.zoning, count: 1 });
+	}
+
+	if(!wards.includes(a.ward)) {
+	    wards.push(a.ward);
 	}
 	
 	if(a.price > maxPrice) {
@@ -251,7 +294,8 @@ const load = async() => {
     }
 
     addZones(zones);
-	
+    addWards(wards);
+    
     draw();
     
     log(`minPrice: ${minPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
@@ -281,11 +325,21 @@ const addZones = async(zones) => {
 
     let thead = table.createTHead();
     let row = thead.insertRow();
-    let text = document.createTextNode("Zoning");
     let th = document.createElement("th");
-    th.appendChild(text);
-    th.colSpan = 2;
+        
+    let button = document.createElement('button');
+    button.innerText = 'toggle';
+    button.id = 'toggle_zone';
+    button.addEventListener("click", toggle);
+    th.appendChild(button);
+
     row.appendChild(th);
+    
+    let th2 = document.createElement("th");
+    let text = document.createTextNode("Zoning");    
+    th2.appendChild(text);
+    
+    row.appendChild(th2);
 
 //    zones = zones.sort();
     
@@ -296,6 +350,7 @@ const addZones = async(zones) => {
 	let check = document.createElement("INPUT");
 	check.setAttribute("type", "checkbox");
 	check.setAttribute('id', `zone_${i}`);
+	check.setAttribute('name', 'zone');
 	check.setAttribute('class', 'zoneCheck');
 	check.value = zones[i].zone;
 	check.checked = zones[i].zone == 'RESIDENCE';;
@@ -308,6 +363,58 @@ const addZones = async(zones) => {
 	let text = `${zones[i].zone} (${zones[i].count})`;;
 	
 	let t = document.createTextNode(text);
+	c2.appendChild(t);
+	row.appendChild(c2);
+    }
+}
+
+
+const addWards = async(wards) => {
+    var table = document.getElementById('wards')
+
+    let thead = table.createTHead();
+    let row = thead.insertRow();
+
+    let button = document.createElement('button');
+    button.innerText = 'toggle';
+    button.id = 'toggle_ward';
+    button.addEventListener("click", toggle);
+
+    let th = document.createElement("th");
+
+    th.appendChild(button);    
+
+    row.appendChild(th);
+
+    let th2 = document.createElement("th");
+    let text = document.createTextNode("Wards");
+    th2.appendChild(text);
+
+    row.appendChild(th2);
+
+    wards = wards.sort();
+    
+    for(let i = 0; i < wards.length; i++) {
+
+	let ward = wards[i];
+	let row = table.insertRow();
+	let c1 = document.createElement('td');
+
+	let check = document.createElement("INPUT");
+	check.setAttribute("type", "checkbox");
+	check.setAttribute('id', `ward_${i}`);
+	check.setAttribute('name', 'ward');
+	check.setAttribute('class', 'wardCheck');
+	check.value = wards[i];
+	check.checked = true;
+	check.addEventListener("click", draw);
+	c1.appendChild(check);
+	row.appendChild(c1);
+
+	let c2 = document.createElement('td')
+
+	ward = ward ? ward : 'Blank';
+	let t = document.createTextNode(ward);
 	c2.appendChild(t);
 	row.appendChild(c2);
     }
