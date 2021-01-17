@@ -21,10 +21,13 @@ style.color = "#faa";
 
 var wardsLayer = L.geoJSON(wards, { style: style }).addTo(mymap);
 
+let wardColors = ['#fffec5', '#e4f3bb', '#eed6fc', '#aae6dc', '#f8d3c6', '#c6e7fd', '#f9d48b'];
+
+style.fillOpacity = 0.55;
+
 wardsLayer.eachLayer(function(layer) {
     var feature = layer.feature;
     var html = `<strong>WARD ${feature.properties.Ward}`;
-    console.log(label);
 
     var label = L.marker(layer.getBounds().getCenter(), {
 	icon: L.divIcon({
@@ -33,6 +36,10 @@ wardsLayer.eachLayer(function(layer) {
             iconSize: [100, 40]
 	})
     }).addTo(mymap);
+
+    var index = parseInt(feature.properties.Ward);
+    style.color = wardColors[index-1];
+    layer.setStyle(style);
 });
 
 var markers = [];
