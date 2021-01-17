@@ -43,6 +43,10 @@ wardsLayer.eachLayer(function(layer) {
     layer.setStyle(style);
 });
 
+style.color = '#555';
+style.weight = 1;
+style.fillOpacity = .5;
+
 var markers = [];
 
 var scale = 2000000;
@@ -116,6 +120,8 @@ var addresses = [];
 var properties = [];
 
 const draw = async() => {
+
+    var buildingsLayer = L.geoJSON(buildings, { style: style }).addTo(mymap);
 
     for(var i = 0; i < markers.length; i++) {
 	mymap.removeLayer(markers[i]);
