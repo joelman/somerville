@@ -21,6 +21,7 @@ style.color = "#faa";
 
 var wardsLayer = L.geoJSON(wards, { style: style }).addTo(mymap);
 
+// http://www.somervillema.gov/sites/default/files/ward-and-precinct-map.pdf
 let wardColors = ['#fffec5', '#e4f3bb', '#eed6fc', '#aae6dc', '#f8d3c6', '#c6e7fd', '#f9d48b'];
 
 style.fillOpacity = 0.55;
@@ -422,6 +423,10 @@ const addWards = async(wards) => {
 	let row = table.insertRow();
 	let c1 = document.createElement('td');
 
+	if(ward) {
+	    c1.bgColor = wardColors[i-1];
+	}
+	
 	let check = document.createElement("INPUT");
 	check.setAttribute("type", "checkbox");
 	check.setAttribute('id', `ward_${i}`);
