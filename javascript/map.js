@@ -9,6 +9,14 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: token
 }).addTo(mymap);
 
+var myStyle = {
+    "color": "#aaa",
+    "weight": 2.5,
+    "fillOpacity": 0.0
+};
+
+var bostonLayer = L.geoJSON(boston, { style: myStyle }).addTo(mymap);
+
 var markers = [];
 
 var scale = 2000000;
@@ -107,9 +115,6 @@ const draw = async() => {
 
 	for(var c = step; c < scale; c += step) {
 	    var value = address.value;
-	    if(address.price > value) {
-		value = address.price;
-	    }
 	    
 	    if(value >= c) {
 		color++;
@@ -159,7 +164,7 @@ function lookup(e) {
 	}
     }
 
-    log(`${match.number} ${match.street}`);
+    log(`match: ${match.number} ${match.street}`);
     
     var props = properties.filter(x => x['HOUSE NO'] == match.number && x['STREET'] == match.street)
     console.log(props)
@@ -173,7 +178,7 @@ function hi(e) {
 	var parcels = properties.filter(x => x.lat == x.lat && x.lon == o.lon)
 	console.log(parcels);
 	
-	var data = [`${parcels[0].HOUSE_NO} ${parcels[0].STREET}`];
+	var data = [`${parcels[0].HOUSE_NO} ${parcels[0].STREET} (${parcels[0].ZONE_DESP})`];
 	if(parcels[0].UNIT) {
 		data.push(`${parcels.length} Units`);
 	}
