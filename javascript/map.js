@@ -47,6 +47,8 @@ style.color = '#555';
 style.weight = 1;
 style.fillOpacity = .5;
 
+var buildingsLayer = L.geoJSON(buildings, { style: style }).addTo(mymap);
+
 var markers = [];
 
 var scale = 2000000;
@@ -120,9 +122,7 @@ var addresses = [];
 var properties = [];
 
 const draw = async() => {
-
-    var buildingsLayer = L.geoJSON(buildings, { style: style }).addTo(mymap);
-
+    
     for(var i = 0; i < markers.length; i++) {
 	mymap.removeLayer(markers[i]);
     }
@@ -164,24 +164,14 @@ const draw = async() => {
 	if(!wards.includes(address.ward)) {
 	    continue;
 	}
-	
-	var color = 0;
-
-	for(var c = step; c < scale; c += step) {
-	    var value = address.value;
-	    
-	    if(value >= c) {
-		color++;
-	    }
-	}
-
-	if(!selected[color]) {
+		
+	if(!selected[address.interval]) {
 	    continue;
 	}
-	
+		
 	var circle = L.circle([address.lat, address.lon], {
-            color: colors[color],
-            fillColor: colors[color],
+            color: colors[address.interval],
+            fillColor: colors[address.interval],
             fillOpacity: 1,
             radius: 5,
 	    lat: address.lat,
@@ -229,7 +219,14 @@ mymap.on('click', lookup);
 function hi(e) {
 	console.log(e);
 	var o = e.options;
-	var parcels = properties.filter(x => x.lat == x.lat && x.lon == o.lon)
+	let lat = o.lat;
+	let lon = o.lon;
+	if(o.address) {
+		lat = o.address.lat;
+		lon = o.address.lon;
+	}
+	
+	var parcels = properties.filter(x => x.lat == lat && x.lon == lon)
 	console.log(parcels);
 	
 	var data = [`${parcels[0].HOUSE_NO} ${parcels[0].STREET} (${parcels[0].ZONE_DESP})`];
@@ -288,6 +285,14 @@ const load = async() => {
             lon: parseFloat(p[7])
         };
 
+	a.interval = 0;
+
+	for(var c = step; c < scale; c += step) {	    	   
+	    if(a.value >= c) {
+		a.interval++;
+	    }
+	}
+	
 	if(a.zoning == '') {
 	    a.zoning = 'Blank';
 	}
@@ -317,8 +322,7 @@ const load = async() => {
 
 	if(a.value < minValue && a.value > 0) {
 	    minValue = a.value;
-	}
-	
+	}	
         addresses.push(a);
     }
 
@@ -347,6 +351,39 @@ const load = async() => {
         properties.push(plot);
     }
     log(`loaded ${properties.length} properties.`)
+	
+	// add buildings
+	buildingsLayer.eachLayer(function(layer) {
+		
+		var c = layer.feature.geometry.coordinates[0]
+		var cRev = [];
+		for(let i = 0; i < c.length; i++) {
+			let coord = c[i];
+			cRev.push([coord[1], coord[0]]);
+		}
+		
+		var polygon = L.polygon(cRev);			
+		var bounds = polygon.getBounds();
+		var center = bounds.getCenter();
+			
+		var matches = addresses.filter(address => {						
+			let a = L.latLng(address.lat, address.lon);			
+			return bounds.contains(a);
+		});
+											
+		if(matches.length) {
+			var m = matches[0];
+			
+			var style = { color: colors[m.interval] };
+			layer.setStyle(style);
+			
+			layer.options.address = m;			
+		}
+		
+		i++;
+	});
+	
+	buildingsLayer.bindPopup(hi).openPopup();
 }
 
 const addZones = async(zones) => {
