@@ -2,19 +2,62 @@ var mymap = L.map('mapid').setView([42.3949919,-71.1045912], 14);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery Â© <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 18,
+    maxZoom: 19,
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
     accessToken: token
 }).addTo(mymap);
-
+	
 var polygons = [];
+var labels = [];
+
+mymap.on('zoomend', function() {
+	let zoom = mymap.getZoom();
+	console.log(zoom);
+	
+	for(let i = 0; i < labels.length; i++) {
+			let label = labels[i];
+			if (mymap.hasLayer(label)) {
+			mymap.removeLayer(label);
+			}
+		}
+		
+	if(zoom >= 18) {
+		var bounds = mymap.getBounds();
+		var length = polygons.length;
+		for(let i = 0; i < length; i++) {
+			let polygon = polygons[i];
+			if(!polygon.options.number) {
+				continue;
+			}
+			
+			let center = polygon.getBounds().getCenter();
+			if(bounds.contains(center)) {				
+			console.log(center);
+			
+			// fudge to center
+			center.lat += .000025;
+			center.lon -= .00007;
+				var label = L.marker(center, {
+			icon: L.divIcon({
+            className: 'streetnumber',
+            html: polygon.options.number,
+            iconSize: [1, 1],
+			options: { number: polygon.options.number, street: polygon.options.street }
+			})
+    }).addTo(mymap);
+	label.bindPopup(hi);
+	labels.push(label);
+			}
+		}
+	} 
+});
 
 var style = {
     "color": "#aaa",
     "weight": 2.5,
-    "fillOpacity": 0.0
+    "fillOpacity": 0.5
 };
 
 var bostonLayer = L.geoJSON(boston, { style: style }).addTo(mymap);
@@ -42,7 +85,7 @@ var wardErrors = [
 // http://www.somervillema.gov/sites/default/files/ward-and-precinct-map.pdf
 let wardColors = ['#fffec5', '#e4f3bb', '#eed6fc', '#aae6dc', '#f8d3c6', '#c6e7fd', '#f9d48b'];
 
-style.fillOpacity = 0.55;
+style.fillOpacity = 0.5;
 
 wardsLayer.eachLayer(function(layer) {
     var feature = layer.feature;
@@ -276,6 +319,10 @@ function hi(e) {
     if(e.options) {
 
 	var o = e.options;
+	// label?
+	if(o.icon) {
+		o = o.icon.options.options;
+	}
 		
 	parcels = properties.filter(x => x.HOUSE_NO == o.number && x.STREET == o.street);
 	console.log(parcels);
@@ -453,7 +500,7 @@ const load = async() => {
 	
 		    if (bounds.contains(a)) {
 
-				var style = { color: colors[address.interval] };
+				var style = { color: colors[address.interval], fillOpacity: .5 };
 				layer.setStyle(style);
 
 			layer.options.value = address.value;
@@ -464,7 +511,7 @@ const load = async() => {
 			layer.options.zoning = address.zoning;
 			layer.options.interval = address.interval;
 			temp.splice(i, 1);
-
+		
 				break;	
 			}
 					
