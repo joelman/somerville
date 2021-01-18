@@ -92,9 +92,9 @@ wardsLayer.eachLayer(function(layer) {
 
     var label = L.marker(layer.getBounds().getCenter(), {
 	icon: L.divIcon({
-            className: 'label',
+            className: 'wardLabel',
             html: html,
-            iconSize: [100, 40]
+            iconSize: [55, 15]
 	})
     }).addTo(mymap);
 
