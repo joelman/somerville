@@ -14,7 +14,6 @@ var labels = [];
 
 mymap.on('zoomend', function() {
 	let zoom = mymap.getZoom();
-	console.log(zoom);
 	
 	for(let i = 0; i < labels.length; i++) {
 			let label = labels[i];
@@ -34,8 +33,7 @@ mymap.on('zoomend', function() {
 			
 			let center = polygon.getBounds().getCenter();
 			if(bounds.contains(center)) {				
-			console.log(center);
-			
+						
 			// fudge to center
 			center.lat += .000025;
 			center.lon -= .00007;
@@ -57,12 +55,13 @@ mymap.on('zoomend', function() {
 var style = {
     "color": "#aaa",
     "weight": 2.5,
-    "fillOpacity": 0.5
+    "fillOpacity": 0
 };
 
 var bostonLayer = L.geoJSON(boston, { style: style }).addTo(mymap);
 
 style.color = "#faa";
+style.fillOpacity = .25;
 
 var wardsLayer = L.geoJSON(wards, { style: style }).addTo(mymap);
 
@@ -76,7 +75,7 @@ var wardErrors = [
 '162 HIGHLAND AVE'
 ],
 ['11 BELMONT PL', '414 MCGRATH HWY', '9 MONTROSE CT'],
-['15 MELVILLE RD', '133 SHORE DR', '99 TEMPLE RD', '95 TEMPLE RD'],
+['15 MELVILLE RD', '133 SHORE DR', '99 TEMPLE RD', '95 TEMPLE RD', '308 BROADWAY'],
 ['74 ELM ST', '28 CEDAR ST'],
 ['66 LEXINGTON AVE', '117 ELM ST', '74 ELM ST'],
 ['132 CURTIS ST']
@@ -126,9 +125,10 @@ function initControls() {
     let row = thead.insertRow();
     let th = document.createElement("th");
     
-    let button = document.createElement('button');
-    button.innerText = 'toggle';
+    let button = document.createElement('INPUT');
+    button.setAttribute("type", "checkbox");
     button.id = 'toggle_value';
+	button.checked = true;
     button.addEventListener("click", toggle);
     th.appendChild(button);
 
@@ -217,6 +217,8 @@ const draw = async() => {
 	mymap.removeLayer(layer);
     });
 
+	let parcels = 0;
+	let value = 0;
     let bounds = null;
     let length = polygons.length;
     for(var i = 0; i < length; i++) {
@@ -242,6 +244,10 @@ const draw = async() => {
 	}
 	
 	polygon.addTo(mymap);
+	
+	parcels++;
+	value += o.value;
+	
     }
 
     if(bounds != null) {
@@ -282,8 +288,11 @@ const draw = async() => {
 	markers.push(circle);
         circle.addTo(mymap);
     }
-*/
-    log(`loaded ${addresses.length} addresses.`)
+*/    
+	if(parcels) {
+		log(`Parcels: ${parcels}`);
+		log(`Value: ${value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`)
+	}
 }
 
 function lookup(e) {
@@ -304,11 +313,8 @@ function lookup(e) {
 	    match = address;
 	}
     }
-
-    log(`match: ${match.number} ${match.street}`);
     
-    var props = properties.filter(x => x['HOUSE NO'] == match.number && x['STREET'] == match.street)
-    console.log(props)
+    var props = properties.filter(x => x['HOUSE NO'] == match.number && x['STREET'] == match.street)    
 }
 
 mymap.on('click', lookup);
@@ -325,7 +331,7 @@ function hi(e) {
 	}
 		
 	parcels = properties.filter(x => x.HOUSE_NO == o.number && x.STREET == o.street);
-	console.log(parcels);
+	
     }
 
     if(parcels.length) {
@@ -451,14 +457,10 @@ const load = async() => {
         addresses.push(a);
     }
 
-    addZones(zones);
+	log(`loaded ${addresses.length} addresses.`)
+    
+	addZones(zones);
     addWards(wards);
-
-    log(`minPrice: ${minPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
-    log(`maxPrice: ${maxPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
-
-    log(`minValue: ${minValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
-    log(`maxValue: ${maxValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
 
     length = propertyRows.length;
     var plotted = [];
@@ -510,6 +512,7 @@ const load = async() => {
 			layer.options.ward = address.ward;
 			layer.options.zoning = address.zoning;
 			layer.options.interval = address.interval;
+			
 			temp.splice(i, 1);
 		
 				break;	
@@ -528,8 +531,9 @@ const addZones = async(zones) => {
     let row = thead.insertRow();
     let th = document.createElement("th");
         
-    let button = document.createElement('button');
-    button.innerText = 'toggle';
+    let button = document.createElement('input');
+    button.setAttribute("type", "checkbox");
+	button.checked = true;
     button.id = 'toggle_zone';
     button.addEventListener("click", toggle);
     th.appendChild(button);
@@ -576,8 +580,9 @@ const addWards = async(wards) => {
     let thead = table.createTHead();
     let row = thead.insertRow();
 
-    let button = document.createElement('button');
-    button.innerText = 'toggle';
+    let button = document.createElement('input');
+    button.setAttribute("type", "checkbox");
+	button.checked = true;
     button.id = 'toggle_ward';
     button.addEventListener("click", toggle);
 
@@ -627,7 +632,7 @@ const addWards = async(wards) => {
 
 function log(message) {
     var box = document.getElementById('output')
-    box.innerHTML += `<p>${message}</p>`
+    box.innerHTML += `${message}\r\n`
     box.style.visibility = 'visible'
 
 }
