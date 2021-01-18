@@ -277,7 +277,7 @@ function hi(e) {
 
 	var o = e.options;
 		
-	parcels = properties.filter(x => x.PARCEL_ID == o.parcel)
+	parcels = properties.filter(x => x.HOUSE_NO == o.number && x.STREET == o.street);
 	console.log(parcels);
     }
 
@@ -458,6 +458,8 @@ const load = async() => {
 
 			layer.options.value = address.value;
 			layer.options.parcel = address.parcel;
+			layer.options.street = address.street;
+			layer.options.number = address.number;
 			layer.options.ward = address.ward;
 			layer.options.zoning = address.zoning;
 			layer.options.interval = address.interval;
