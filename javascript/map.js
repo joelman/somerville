@@ -179,7 +179,7 @@ const draw = async() => {
         });
 		
         // circle.bindPopup(`${a.number} ${a.street}`).openPopup();
-	circle.bindPopup(hi).openPopup();
+	circle.bindPopup(hi)
 	circle.on('click', lookup);
 
 	markers.push(circle);
@@ -329,8 +329,8 @@ const load = async() => {
     addZones(zones);
     addWards(wards);
     
-    draw();
-    
+	draw();
+	
     log(`minPrice: ${minPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
     log(`maxPrice: ${maxPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
 
@@ -352,7 +352,9 @@ const load = async() => {
     }
     log(`loaded ${properties.length} properties.`)
 	
-	// add buildings
+	// add buildings		
+	var temp = addresses;
+	length = temp.length;
 	buildingsLayer.eachLayer(function(layer) {
 		
 		var c = layer.feature.geometry.coordinates[0]
@@ -361,29 +363,30 @@ const load = async() => {
 			let coord = c[i];
 			cRev.push([coord[1], coord[0]]);
 		}
-		
+
 		var polygon = L.polygon(cRev);			
 		var bounds = polygon.getBounds();
 		var center = bounds.getCenter();
-			
-		var matches = addresses.filter(address => {						
-			let a = L.latLng(address.lat, address.lon);			
-			return bounds.contains(a);
-		});
-											
-		if(matches.length) {
-			var m = matches[0];
-			
-			var style = { color: colors[m.interval] };
-			layer.setStyle(style);
-			
-			layer.options.address = m;			
-		}
 		
-		i++;
+		for(let i = 0; i < length; i++) {
+			console.log(length);
+			var address = temp[i];						
+			let a = L.latLng(address.lat, address.lon);					
+			if (bounds.contains(a)) {
+					
+				var style = { color: colors[address.interval] };
+				layer.setStyle(style);
+			
+				layer.options.address = address;
+				//temp = temp.splice(i, 1);
+				//length--
+				//break;	
+			}
+					
+		}		
 	});
 	
-	buildingsLayer.bindPopup(hi).openPopup();
+	buildingsLayer.bindPopup(hi);
 }
 
 const addZones = async(zones) => {
@@ -498,4 +501,7 @@ function log(message) {
 }
 
 initControls();
+
 load();
+
+console.log("load called")
