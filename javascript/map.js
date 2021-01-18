@@ -23,6 +23,22 @@ style.color = "#faa";
 
 var wardsLayer = L.geoJSON(wards, { style: style }).addTo(mymap);
 
+var wardErrors = [
+[], // 0
+['43 THIRD AVE', '21 THIRD AVE', '132 MIDDLESEX AVE', '120 MIDDLESEX AVE'],
+['31 HAROLD RD', '290 SOMERVILLE AVE', '14 BLEACHERY CT', '41 SCHOOL ST', '32 SKEHAN ST', '14 EVERETT ST', '42 DANE ST', '58 DANE ST',
+'208 WASHINGTON ST', '204 WASHINGTON ST', '202 WASHINGTON ST', '198 WASHINGTON ST', '192 WASHINGTON ST', '216 MCGRATH HWY', 
+'120 MCGRATH HWY', '181 MCGRATH HWY', '51 MCGRATH HWY', '35 MCGRATH HWY', '200 INNER BELT RD', '1 MCGRATH HWY', '120 WASHINGTON ST',
+'218 HIGHLAND AVE', '216 HIGHLAND AVE', '214 HIGHLAND AVE', '212 HIGHLAND AVE', '116 BELMONT ST', '114 BELMONT ST', '67 BENTON RD', 
+'162 HIGHLAND AVE'
+],
+['11 BELMONT PL', '414 MCGRATH HWY', '9 MONTROSE CT'],
+['15 MELVILLE RD', '133 SHORE DR', '99 TEMPLE RD', '95 TEMPLE RD'],
+['74 ELM ST', '28 CEDAR ST'],
+['66 LEXINGTON AVE', '117 ELM ST', '74 ELM ST'],
+['132 CURTIS ST']
+]
+
 // http://www.somervillema.gov/sites/default/files/ward-and-precinct-map.pdf
 let wardColors = ['#fffec5', '#e4f3bb', '#eed6fc', '#aae6dc', '#f8d3c6', '#c6e7fd', '#f9d48b'];
 
@@ -167,11 +183,11 @@ const draw = async() => {
 	if(!zones.includes(o.zoning)) {
 	    continue;
 	}
-
+	
 	if(!wards.includes(o.ward)) {
 	    continue;
 	}
-		
+				
 	if(!selected[o.interval]) {
 	    continue;
 	}
@@ -309,7 +325,7 @@ const load = async() => {
     let wards = [];
     
     let length = addressRows.length;
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
         var p = addressRows[i].split('\t');
         var a = {
 	    price: parseInt(p[0]),
@@ -323,6 +339,30 @@ const load = async() => {
             lon: parseFloat(p[8])
         };
 
+	/* for one-time setting of ward
+	doesn't seem to match all of them
+	let m1 = L.marker([a.lat, a.lon]);
+	let wardFound = false;
+	wardsLayer.eachLayer(function(layer) {		
+		if(layer.contains(m1.getLatLng())) {
+			console.log(`{ parcel: '${a.parcel}', ward: '${layer.feature.properties.Ward}' },\r\n`);
+			wardFound = true;
+		}
+	});
+	
+	/*
+	var w = wardParcels.filter(x => x.parcel == a.parcel);
+	if(w.length) {
+		a.ward = w[0].ward;
+	}
+	*/
+	
+	for(let i = 0; i < wardErrors.length; i++) {
+		if(wardErrors[i].includes(`${a.number} ${a.street}`)) {
+			a.ward = i.toString();
+		}
+	}
+	
 	a.interval = 0;
 
 	for(var c = step; c < scale; c += step) {	    	   
