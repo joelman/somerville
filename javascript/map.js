@@ -9,6 +9,8 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: token
 }).addTo(mymap);
 
+var polygons = [];
+
 var style = {
     "color": "#aaa",
     "weight": 2.5,
@@ -89,7 +91,7 @@ function initControls() {
 	check.setAttribute('id', `index_${(i/step)}`);
 	check.setAttribute('name', 'value');
 	check.setAttribute('class', 'rangeCheck');
-//	check.checked = true;
+	check.checked = true;
 	check.addEventListener("click", draw);
 	c1.appendChild(check);
 	row.appendChild(c1);
@@ -151,7 +153,32 @@ const draw = async() => {
 	    wards.push(check.value);
 	}
     }
+
+    buildingsLayer.eachLayer(function(layer) {
+	mymap.removeLayer(layer);
+    });
+
+    let length = polygons.length;
+    for(var i = 0; i < length; i++) {
+	var polygon = polygons[i];
+	var o = polygon.options;
+
+	if(!zones.includes(o.zoning)) {
+	    continue;
+	}
+
+	if(!wards.includes(o.ward)) {
+	    continue;
+	}
+		
+	if(!selected[o.interval]) {
+	    continue;
+	}
+	
+	polygon.addTo(mymap);
+    }
     
+    /*
     let length = addresses.length;
     for (var i = 0; i < length; i++) {
 	
@@ -185,7 +212,7 @@ const draw = async() => {
 	markers.push(circle);
         circle.addTo(mymap);
     }
-
+*/
     log(`loaded ${addresses.length} addresses.`)
 }
 
@@ -217,18 +244,17 @@ function lookup(e) {
 mymap.on('click', lookup);
 
 function hi(e) {
-	console.log(e);
+
+    let parcels = [];
+    if(e.options) {
+
 	var o = e.options;
-	let lat = o.lat;
-	let lon = o.lon;
-	if(o.address) {
-		lat = o.address.lat;
-		lon = o.address.lon;
-	}
-	
-	var parcels = properties.filter(x => x.lat == lat && x.lon == lon)
+		
+	parcels = properties.filter(x => x.PARCEL_ID == o.parcel)
 	console.log(parcels);
-	
+    }
+
+    if(parcels.length) {
 	var data = [`${parcels[0].HOUSE_NO} ${parcels[0].STREET} (${parcels[0].ZONE_DESP})`];
 	if(parcels[0].UNIT) {
 		data.push(`${parcels.length} Units`);
@@ -251,7 +277,7 @@ function hi(e) {
 	}
 	o.color = 'red'
 	return data.join('<br />')
-	
+    }
 }
 
 function toggle(e) {
@@ -277,12 +303,13 @@ const load = async() => {
         var a = {
 	    price: parseInt(p[0]),
 	    value: parseInt(p[1]),
-            number: p[2],
-            street: p[3],
-	    zoning: p[4],
-	    ward: p[5],
-            lat: parseFloat(p[6]),
-            lon: parseFloat(p[7])
+	    parcel: p[2],
+	    number: p[3],
+            street: p[4],
+	    zoning: p[5],
+	    ward: p[6],
+            lat: parseFloat(p[7]),
+            lon: parseFloat(p[8])
         };
 
 	a.interval = 0;
@@ -328,9 +355,7 @@ const load = async() => {
 
     addZones(zones);
     addWards(wards);
-    
-	draw();
-	
+
     log(`minPrice: ${minPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
     log(`maxPrice: ${maxPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`);
 
@@ -354,9 +379,11 @@ const load = async() => {
 	
 	// add buildings		
 	var temp = addresses;
-	length = temp.length;
+  
 	buildingsLayer.eachLayer(function(layer) {
-		
+
+	    polygons.push(layer);
+	    
 		var c = layer.feature.geometry.coordinates[0]
 		var cRev = [];
 		for(let i = 0; i < c.length; i++) {
@@ -368,19 +395,24 @@ const load = async() => {
 		var bounds = polygon.getBounds();
 		var center = bounds.getCenter();
 		
-		for(let i = 0; i < length; i++) {
-			console.log(length);
-			var address = temp[i];						
-			let a = L.latLng(address.lat, address.lon);					
-			if (bounds.contains(a)) {
-					
+		for(let i = 0; i < temp.length; i++) {
+
+		    var address = temp[i];						
+		    let a = L.latLng(address.lat, address.lon);
+	
+		    if (bounds.contains(a)) {
+
 				var style = { color: colors[address.interval] };
 				layer.setStyle(style);
-			
-				layer.options.address = address;
-				//temp = temp.splice(i, 1);
-				//length--
-				//break;	
+
+			layer.options.value = address.value;
+			layer.options.parcel = address.parcel;
+			layer.options.ward = address.ward;
+			layer.options.zoning = address.zoning;
+			layer.options.interval = address.interval;
+			temp.splice(i, 1);
+
+				break;	
 			}
 					
 		}		
@@ -422,7 +454,7 @@ const addZones = async(zones) => {
 	check.setAttribute('name', 'zone');
 	check.setAttribute('class', 'zoneCheck');
 	check.value = zones[i].zone;
-	check.checked = zones[i].zone == 'RESIDENCE';;
+	check.checked = true;
 	check.addEventListener("click", draw);
 	c1.appendChild(check);
 	row.appendChild(c1);
