@@ -254,41 +254,6 @@ const draw = async() => {
 	mymap.fitBounds(bounds);
     }
     
-    /*
-    let length = addresses.length;
-    for (var i = 0; i < length; i++) {
-	
-	var address = addresses[i]
-
-	if(!zones.includes(address.zoning)) {
-	    continue;
-	}
-
-	if(!wards.includes(address.ward)) {
-	    continue;
-	}
-		
-	if(!selected[address.interval]) {
-	    continue;
-	}
-		
-	var circle = L.circle([address.lat, address.lon], {
-            color: colors[address.interval],
-            fillColor: colors[address.interval],
-            fillOpacity: 1,
-            radius: 5,
-	    lat: address.lat,
-	    lon: address.lon
-        });
-		
-        // circle.bindPopup(`${a.number} ${a.street}`).openPopup();
-	circle.bindPopup(hi)
-	circle.on('click', lookup);
-
-	markers.push(circle);
-        circle.addTo(mymap);
-    }
-*/    
 	if(parcels) {
 		log(`Parcels: ${parcels}`);
 		log(`Value: ${value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`)
@@ -403,6 +368,10 @@ const load = async() => {
 		}
 	});
 	
+	if(!wardFound) {
+		console.log(a);
+	}
+	 */
 	/*
 	var w = wardParcels.filter(x => x.parcel == a.parcel);
 	if(w.length) {
