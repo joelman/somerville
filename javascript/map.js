@@ -1,3 +1,5 @@
+
+
 var mymap = L.map('mapid').setView([42.3949919,-71.1045912], 14);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -54,7 +56,8 @@ mymap.on('zoomend', function() {
 
 var style = {
     "color": "#aaa",
-    "weight": 2.5,
+    "weight": 5,
+    "opacity": 1,
     "fillOpacity": 0
 };
 
@@ -296,7 +299,7 @@ function hi(e) {
 	}
 		
 	parcels = properties.filter(x => x.HOUSE_NO == o.number && x.STREET == o.street);
-	
+	parcels.map(x => console.log(x.PARCEL_ID));
     }
 
     if(parcels.length) {
@@ -339,10 +342,26 @@ function toggle(e) {
 
 const load = async() => {
 
+    // these fell through the cracks
+    let u = ['032A000030000A1', '032A000030000A2', '032A000030000A3', '032A0000300000M', '040A00002000000'];
+    
+    
+    for(let i = 0; i < u.length; i++) {
+	let m = parcelWards.filter(x => x.parcel == u[i]);
+	if(m.length) {
+	    m[0].ward = '5';
+	}
+    }
+
+    // also:
+    let o = parcelWards.filter(x => x.parcel == '014B00001000000')[0];
+    o.ward = '6';
+    
     let zones = [];
     let wards = [];
     
     let length = addressRows.length;
+    let json = '';
     for (let i = 0; i < length; i++) {
         var p = addressRows[i].split('\t');
         var a = {
@@ -359,30 +378,43 @@ const load = async() => {
 
 	/* for one-time setting of ward
 	doesn't seem to match all of them
+	if(!json) {
+	json = 'var parcelWards = [\r\n';
 	let m1 = L.marker([a.lat, a.lon]);
 	let wardFound = false;
 	wardsLayer.eachLayer(function(layer) {		
 		if(layer.contains(m1.getLatLng())) {
-			console.log(`{ parcel: '${a.parcel}', ward: '${layer.feature.properties.Ward}' },\r\n`);
+			json += `    { parcel: '${a.parcel}', ward: '${layer.feature.properties.Ward}' },\r\n`;
 			wardFound = true;
 		}
 	});
-	
+
+	// use assigned value
 	if(!wardFound) {
-		console.log(a);
+	    json += `    { parcel: '${a.parcel}', ward: '${a.ward}', unmatched: true },\r\n`;
+	    // console.log(a);
 	}
-	 */
+	 
 	/*
 	var w = wardParcels.filter(x => x.parcel == a.parcel);
 	if(w.length) {
 		a.ward = w[0].ward;
 	}
 	*/
-	
+
+	/*
 	for(let i = 0; i < wardErrors.length; i++) {
 		if(wardErrors[i].includes(`${a.number} ${a.street}`)) {
 			a.ward = i.toString();
 		}
+	}
+	*/
+
+	var w = parcelWards.filter(x => x.parcel == a.parcel);
+	if(w.length && w[0].ward) {
+	    a.ward = w[0].ward;
+	} else {
+	    console.log(a.parcel);
 	}
 	
 	a.interval = 0;
@@ -426,9 +458,14 @@ const load = async() => {
         addresses.push(a);
     }
 
-	log(`loaded ${addresses.length} addresses.`)
+    if(json) {
+	json += '];';
+	console.log(json);
+    }
+
+    log(`loaded ${addresses.length} addresses.`)
     
-	addZones(zones);
+    addZones(zones);
     addWards(wards);
 
     length = propertyRows.length;
@@ -446,9 +483,12 @@ const load = async() => {
     }
     log(`loaded ${properties.length} properties.`)
 	
-	// add buildings		
+}
+
+const color = async () => {
+    // add buildings
 	var temp = addresses;
-  
+
 	buildingsLayer.eachLayer(function(layer) {
 
 	    polygons.push(layer);
@@ -491,6 +531,8 @@ const load = async() => {
 	});
 	
 	buildingsLayer.bindPopup(hi);
+
+    return "done";
 }
 
 const addZones = async(zones) => {
@@ -608,6 +650,4 @@ function log(message) {
 
 initControls();
 
-load();
-
-console.log("load called")
+load().then(color());
