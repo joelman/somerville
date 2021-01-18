@@ -158,6 +158,7 @@ const draw = async() => {
 	mymap.removeLayer(layer);
     });
 
+    let bounds = null;
     let length = polygons.length;
     for(var i = 0; i < length; i++) {
 	var polygon = polygons[i];
@@ -174,8 +175,18 @@ const draw = async() => {
 	if(!selected[o.interval]) {
 	    continue;
 	}
+
+	if(bounds == null) {
+	    bounds = polygon.getBounds();
+	} else {
+	    bounds.extend(polygon.getBounds());
+	}
 	
 	polygon.addTo(mymap);
+    }
+
+    if(bounds != null) {
+	mymap.fitBounds(bounds);
     }
     
     /*
