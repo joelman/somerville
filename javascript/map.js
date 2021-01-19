@@ -394,22 +394,6 @@ const load = async() => {
 		}
 	}
 	*/
-/*
-	// first see if there's a correction
-	let w = parcelWardCorrections.filter(x => x.parcel == a.parcel);
-
-	if(w.length) {
-		a.ward = w[0].ward;
-	} else {
-	w = parcelWards.filter(x => x.parcel == a.parcel);
-	if(w.length && w[0].ward) {
-	    a.ward = w[0].ward;
-	} else {
-	    console.log(`${a.parcel} ${a.ward} ${a.number} ${a.street} ${a.lat}, ${a.lon}`);
-	}
-	}
-	
-	*/
 	
 	a.interval = 0;
 

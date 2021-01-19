@@ -1,82 +1,82 @@
-var parcelWardCorrections = [{
-        parcel: '042B0003200000M',
-        ward: '5',
-        unmatched: true
+[{
+        "parcel": "042B0003200000M",
+        "ward": "5",
+        "unmatched": true
     }, {
-        parcel: '014B00001000000',
-        ward: '7',
-        unmatched: true
+        "parcel": "014B00001000000",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '040A00002000000',
-        ward: '4',
-        unmatched: true
+        "parcel": "040A00002000000",
+        "ward": "4",
+        "unmatched": true
     }, {
-        parcel: '032A0000300000M',
-        ward: '5',
-        unmatched: true
+        "parcel": "032A0000300000M",
+        "ward": "5",
+        "unmatched": true
     }, {
-        parcel: '013D0000100000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "013D0000100000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '009D0005400000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "009D0005400000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '097B00019000000',
-        ward: '3',
-        unmatched: true
+        "parcel": "097B00019000000",
+        "ward": "3",
+        "unmatched": true
     }, {
-        parcel: '097B00018000000',
-        ward: '2',
-        unmatched: true
+        "parcel": "097B00018000000",
+        "ward": "2",
+        "unmatched": true
     }, {
-        parcel: '039F0000800000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "039F0000800000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '039F0001500000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "039F0001500000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '007C0000200000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "007C0000200000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '017I0000100000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "017I0000100000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '113B00006000000',
-        ward: '5',
-        unmatched: true
+        "parcel": "113B00006000000",
+        "ward": "5",
+        "unmatched": true
     }, {
-        parcel: '003E0001900000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "003E0001900000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '083E0000400000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "083E0000400000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '051D0000500000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "051D0000500000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '051C0002200000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "051C0002200000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '018A0001800000M',
-        ward: '7',
-        unmatched: true
+        "parcel": "018A0001800000M",
+        "ward": "7",
+        "unmatched": true
     }, {
-        parcel: '083B0002000000M',
-        ward: '2',
-        unmatched: true
+        "parcel": "083B0002000000M",
+        "ward": "2",
+        "unmatched": true
     }, {
-        parcel: '031C00059000000',
-        ward: '2',
-        unmatched: true
+        "parcel": "031C00059000000",
+        "ward": "2",
+        "unmatched": true
     }
-];
+]
