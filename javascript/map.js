@@ -56,7 +56,7 @@ mymap.on('zoomend', function() {
 
 var style = {
     "color": "#aaa",
-    "weight": 5,
+    "weight": 2.5,
     "opacity": 1,
     "fillOpacity": 0
 };
@@ -64,7 +64,7 @@ var style = {
 var bostonLayer = L.geoJSON(boston, { style: style }).addTo(mymap);
 
 style.color = "#faa";
-style.fillOpacity = .25;
+// style.fillOpacity = .25;
 
 var wardsLayer = L.geoJSON(wards, { style: style }).addTo(mymap);
 
@@ -104,7 +104,7 @@ var step = 200000;
 // https://colordesigner.io/gradient-generator
 var colors = ['#0000ff', '#9900e2', '#cf00c1', '#f100a0', '#ff0080', '#ff0063', '#ff004a', '#ff3133', '#ff601c', '#ff8000']
 
-function initControls() {
+function addValues(values) {
 
     var table = document.getElementById('legend')
 
@@ -145,12 +145,13 @@ function initControls() {
 	let c2 = document.createElement('td')
 
 	let text = '';
+	let count = values[i/step];
 	if(i == scale - step) {
-	    text = `${i.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} and over`;
+	    text = `${i.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} and over (${count.toLocaleString()})`;
 	} else {
 	    var from = i.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
 	    var to = (i + step).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-	    text = `${from} to ${to}`;
+	    text = `${from} to ${to} (${count.toLocaleString()})`;
 	}
 	
 	let t = document.createTextNode(text);
@@ -327,7 +328,8 @@ function toggle(e) {
 const load = async() => {
 
 	let start = new Date;
-    
+
+	let values = [];
 	let zones = [];
     let wards = [];
     
@@ -368,6 +370,12 @@ const load = async() => {
 	    if(a.value >= c) {
 		a.interval++;
 	    }
+	}
+	
+	if(values[a.interval]) {
+		values[a.interval]++;
+	} else {
+		values[a.interval] = 1;
 	}
 	
 	if(a.zoning == '') {
@@ -411,6 +419,7 @@ const load = async() => {
 	let now = new Date;
     log(`loaded ${addresses.length} addresses in ${now - start} milliseconds.`);
     
+	addValues(values);
     addZones(zones);
     addWards(wards);
 
@@ -534,7 +543,7 @@ const addZones = async(zones) => {
 
 	let c2 = document.createElement('td')
 
-	let text = `${zones[i].zone} (${zones[i].count})`;;
+	let text = `${zones[i].zone} (${zones[i].count.toLocaleString()})`;;
 	
 	let t = document.createTextNode(text);
 	c2.appendChild(t);
@@ -605,8 +614,6 @@ function log(message) {
     box.style.visibility = 'visible'
 
 }
-
-initControls();
 
 load().then(color());
 
