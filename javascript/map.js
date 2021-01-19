@@ -414,7 +414,7 @@ const load = async() => {
 	if(w.length && w[0].ward) {
 	    a.ward = w[0].ward;
 	} else {
-	    console.log(a.parcel);
+	    console.log(`${a.parcel} ${a.ward} ${a.number} ${a.street} ${a.lat}, ${a.lon}`);
 	}
 	
 	a.interval = 0;
