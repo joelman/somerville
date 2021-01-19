@@ -1,4 +1,3 @@
-let start = new Date;
 
 var mymap = L.map('mapid').setView([42.3949919,-71.1045912], 14);
 
@@ -67,22 +66,6 @@ style.color = "#faa";
 style.fillOpacity = .25;
 
 var wardsLayer = L.geoJSON(wards, { style: style }).addTo(mymap);
-
-var wardErrors = [
-[], // 0
-['43 THIRD AVE', '21 THIRD AVE', '132 MIDDLESEX AVE', '120 MIDDLESEX AVE'],
-['31 HAROLD RD', '290 SOMERVILLE AVE', '14 BLEACHERY CT', '41 SCHOOL ST', '32 SKEHAN ST', '14 EVERETT ST', '42 DANE ST', '58 DANE ST',
-'208 WASHINGTON ST', '204 WASHINGTON ST', '202 WASHINGTON ST', '198 WASHINGTON ST', '192 WASHINGTON ST', '216 MCGRATH HWY', 
-'120 MCGRATH HWY', '181 MCGRATH HWY', '51 MCGRATH HWY', '35 MCGRATH HWY', '200 INNER BELT RD', '1 MCGRATH HWY', '120 WASHINGTON ST',
-'218 HIGHLAND AVE', '216 HIGHLAND AVE', '214 HIGHLAND AVE', '212 HIGHLAND AVE', '116 BELMONT ST', '114 BELMONT ST', '67 BENTON RD', 
-'162 HIGHLAND AVE'
-],
-['11 BELMONT PL', '414 MCGRATH HWY', '9 MONTROSE CT'],
-['15 MELVILLE RD', '133 SHORE DR', '99 TEMPLE RD', '95 TEMPLE RD', '308 BROADWAY'],
-['74 ELM ST', '28 CEDAR ST'],
-['66 LEXINGTON AVE', '117 ELM ST', '74 ELM ST'],
-['132 CURTIS ST']
-]
 
 // http://www.somervillema.gov/sites/default/files/ward-and-precinct-map.pdf
 let wardColors = ['#fffec5', '#e4f3bb', '#eed6fc', '#aae6dc', '#f8d3c6', '#c6e7fd', '#f9d48b'];
@@ -342,7 +325,9 @@ function toggle(e) {
 
 const load = async() => {
 
-    let zones = [];
+	let start = new Date;
+    
+	let zones = [];
     let wards = [];
     
     let length = addressRows.length;
@@ -447,6 +432,7 @@ const load = async() => {
     addZones(zones);
     addWards(wards);
 
+	start = new Date
     length = propertyRows.length;
     var plotted = [];
 	
@@ -460,12 +446,17 @@ const load = async() => {
 
         properties.push(plot);
     }
-    log(`loaded ${properties.length} properties.`)
+	
+	now = new Date
+    log(`loaded ${properties.length} properties in ${now - start}.`)
 	
 }
 
 const color = async () => {
     // add buildings
+	
+	let start = new Date;
+	
 	var temp = addresses;
 
 	buildingsLayer.eachLayer(function(layer) {
@@ -511,6 +502,9 @@ const color = async () => {
 	
 	buildingsLayer.bindPopup(hi);
 
+	let end = new Date;
+	log(`finished coloring in ${end - start}`)
+	
     return "done";
 }
 
@@ -597,12 +591,12 @@ const addWards = async(wards) => {
 	let c1 = document.createElement('td');
 
 	if(ward) {
-	    c1.bgColor = wardColors[i-1];
+	    c1.bgColor = wardColors[i];
 	}
 	
 	let check = document.createElement("INPUT");
 	check.setAttribute("type", "checkbox");
-	check.setAttribute('id', `ward_${i}`);
+	check.setAttribute('id', `ward_${i+1}`);
 	check.setAttribute('name', 'ward');
 	check.setAttribute('class', 'wardCheck');
 	check.value = wards[i];
