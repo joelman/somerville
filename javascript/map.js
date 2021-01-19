@@ -1,4 +1,4 @@
-
+let start = new Date;
 
 var mymap = L.map('mapid').setView([42.3949919,-71.1045912], 14);
 
@@ -342,21 +342,6 @@ function toggle(e) {
 
 const load = async() => {
 
-    // these fell through the cracks
-    let u = ['032A000030000A1', '032A000030000A2', '032A000030000A3', '032A0000300000M', '040A00002000000'];
-    
-    
-    for(let i = 0; i < u.length; i++) {
-	let m = parcelWards.filter(x => x.parcel == u[i]);
-	if(m.length) {
-	    m[0].ward = '5';
-	}
-    }
-
-    // also:
-    let o = parcelWards.filter(x => x.parcel == '014B00001000000')[0];
-    o.ward = '6';
-    
     let zones = [];
     let wards = [];
     
@@ -409,13 +394,22 @@ const load = async() => {
 		}
 	}
 	*/
+/*
+	// first see if there's a correction
+	let w = parcelWardCorrections.filter(x => x.parcel == a.parcel);
 
-	var w = parcelWards.filter(x => x.parcel == a.parcel);
+	if(w.length) {
+		a.ward = w[0].ward;
+	} else {
+	w = parcelWards.filter(x => x.parcel == a.parcel);
 	if(w.length && w[0].ward) {
 	    a.ward = w[0].ward;
 	} else {
 	    console.log(`${a.parcel} ${a.ward} ${a.number} ${a.street} ${a.lat}, ${a.lon}`);
 	}
+	}
+	
+	*/
 	
 	a.interval = 0;
 
@@ -463,7 +457,8 @@ const load = async() => {
 	console.log(json);
     }
 
-    log(`loaded ${addresses.length} addresses.`)
+	let now = new Date;
+    log(`loaded ${addresses.length} addresses in ${now - start} milliseconds.`);
     
     addZones(zones);
     addWards(wards);
@@ -651,3 +646,7 @@ function log(message) {
 initControls();
 
 load().then(color());
+
+let end = new Date;
+
+log(`${end - start}`);
