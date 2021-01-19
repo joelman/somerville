@@ -417,7 +417,7 @@ const load = async() => {
     }
 
 	let now = new Date;
-    log(`loaded ${addresses.length} addresses in ${now - start} milliseconds.`);
+    log(`loaded ${addresses.length} addresses in ${now - start} milliseconds`);
     
 	addValues(values);
     addZones(zones);
@@ -439,7 +439,7 @@ const load = async() => {
     }
 	
 	now = new Date
-    log(`loaded ${properties.length} properties in ${now - start}.`)
+    log(`loaded ${properties.length} properties in ${now - start}`)
 	
 }
 
