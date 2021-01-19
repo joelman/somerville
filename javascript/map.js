@@ -1,3 +1,4 @@
+let start = new Date
 
 var mymap = L.map('mapid').setView([42.3949919,-71.1045912], 14);
 
@@ -359,25 +360,6 @@ const load = async() => {
 		}
 	});
 
-	// use assigned value
-	if(!wardFound) {
-	    json += `    { parcel: '${a.parcel}', ward: '${a.ward}', unmatched: true },\r\n`;
-	    // console.log(a);
-	}
-	 
-	/*
-	var w = wardParcels.filter(x => x.parcel == a.parcel);
-	if(w.length) {
-		a.ward = w[0].ward;
-	}
-	*/
-
-	/*
-	for(let i = 0; i < wardErrors.length; i++) {
-		if(wardErrors[i].includes(`${a.number} ${a.street}`)) {
-			a.ward = i.toString();
-		}
-	}
 	*/
 	
 	a.interval = 0;
@@ -458,9 +440,12 @@ const color = async () => {
 	let start = new Date;
 	
 	var temp = addresses;
+	let i = 0;
+	let counter = document.getElementById('counter');
 
 	buildingsLayer.eachLayer(function(layer) {
 
+		i++;
 	    polygons.push(layer);
 	    
 		var c = layer.feature.geometry.coordinates[0]
@@ -469,7 +454,7 @@ const color = async () => {
 			let coord = c[i];
 			cRev.push([coord[1], coord[0]]);
 		}
-
+		
 		var polygon = L.polygon(cRev);			
 		var bounds = polygon.getBounds();
 		var center = bounds.getCenter();
@@ -493,8 +478,8 @@ const color = async () => {
 			layer.options.interval = address.interval;
 			
 			temp.splice(i, 1);
-		
-				break;	
+			
+			break;	
 			}
 					
 		}		
@@ -503,7 +488,7 @@ const color = async () => {
 	buildingsLayer.bindPopup(hi);
 
 	let end = new Date;
-	log(`finished coloring in ${end - start}`)
+	log(`colored ${i} polygons in ${end - start}`)
 	
     return "done";
 }
@@ -627,4 +612,17 @@ load().then(color());
 
 let end = new Date;
 
-log(`${end - start}`);
+/*
+['mapContainer', 'controls'].forEach(function(id) {
+	let element = document.getElementById(id);
+	let style = getComputedStyle(element)
+	console.log('display: ' + style.display);
+	if (style.display === "none") {
+		element.style.display = "flex";
+	} else {
+		element.style.display = "none";
+	}
+});
+*/
+
+log(`total time: ${end - start}`);

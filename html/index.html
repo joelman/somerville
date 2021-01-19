@@ -24,14 +24,17 @@
 	  th {
 	  border: solid thin gray;
 	  }
-      #mapid { width: 80em; height: 60em; display: inline-block; border: solid thin gray; }
+      #mapid { width: 80em; height: 60em; display: inline-block; border: solid thin gray;}
+	  
       .container {
 	  display: flex;
 	  flex-wrap: wrap;
 	  }
+	  		
 		#controls {
-		
+			
 		}
+		
 	  .streetnumber {
 		color: #444;
 		}
@@ -43,24 +46,34 @@
 		text-align: center;
 		border-radius: 0.5em;
 		}
+		
+		#loader {
+		position: absolute;
+		top: 20%;
+		right: 50%;
+		}
     </style>
   </head>
   <body>
     <h1>City of Somerville</h1>
-	<div class="container">
-    <div id="mapid"></div>
-    <div class="container">
-	<table id="legend"></table>
-	<table id="wards"></table>
-	<table id="zones"></table>
+	
+	<div class="container" id="mapContainer" style="display: flex">
+
+		<div id="mapid"></div>
+
+    <div id="controls" class="container" >
+		<table id="legend"></table>
+		<table id="wards"></table>
+		<table id="zones"></table>
       <pre id="output"></pre>
 	  </div>
       </div>
-    
     <p>
       <a href="mailto:joelman@gmail.com">[contact]</a>
     </p>
-    
+
+		<div id="loader"><img src="../images/giphy.gif" /></div>
+
     <script src="../javascript/token.js"></script>
     <script src="../javascript/addresses.js"></script>
     <script src="../javascript/properties.js"></script>
