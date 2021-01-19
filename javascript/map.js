@@ -495,7 +495,8 @@ const color = async () => {
 	});
 	
 	buildingsLayer.bindPopup(hi);
-
+	document.getElementById('loader').style.display = 'none';
+	
 	let end = new Date;
 	log(`colored ${i} polygons in ${end - start}`)
 	
@@ -615,7 +616,10 @@ function log(message) {
 
 }
 
-load().then(color());
+load().then(
+	setTimeout(function() {
+      color();
+    }, 0));
 
 let end = new Date;
 
@@ -632,4 +636,3 @@ let end = new Date;
 });
 */
 
-log(`total time: ${end - start}`);
