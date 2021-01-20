@@ -639,9 +639,10 @@ function log(message) {
 }
 
 load().then(
-    setTimeout(function () {
-        color();
-    }, 0));
+//    setTimeout(function () {
+        color()
+//}, 0)
+);
 
 let end = new Date;
 
