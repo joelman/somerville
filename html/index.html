@@ -17,20 +17,28 @@
       h1 { font-size: 2em; }
       h2 { font-size: 1em; }
       table {
-	  padding: .5em;
-	  margin: .5em;
+	  margin-right: 1em;
 	  border: solid thin gray;
+	  border-spacing: .5em;
+	  border-radius: .25em;
 	  }
-	  th {
-	  border: solid thin gray;
-	  }
-      #mapid { width: 80em; height: 60em; display: inline-block; border: solid thin gray;}
+  
+	td {
+		border-radius: .25em;
+	}
+	  
+      #mapid { width: 80em; height: 60em; display: inline-block; border: solid thin gray; margin-right: 1em; margin-bottom: 1em; border-radius: .25em; }
 	  
       .container {
 	  display: flex;
 	  flex-wrap: wrap;
+	  
 	  }
-	  		
+	  pre {
+		
+		margin-top: 0;
+		}
+		
 		#controls {
 			
 		}
@@ -58,6 +66,7 @@
   </head>
   <body>
     <h1>City of Somerville</h1>
+	<p>Zoom in and click on a parcel for more information.</p>
 	<div id="counter"></div>
 	<div class="container" id="mapContainer" style="display: flex">
 

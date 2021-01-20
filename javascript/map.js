@@ -3,7 +3,7 @@ let start = new Date
     var mymap = L.map('mapid').setView([42.3949919, -71.1045912], 14);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery Â© <a href="https://www.mapbox.com/">Mapbox</a>',
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery &copy; <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 19,
     id: 'mapbox/streets-v11',
     tileSize: 512,
@@ -23,6 +23,8 @@ mymap.on('zoomend', function () {
             mymap.removeLayer(label);
         }
     }
+
+	labels = [];
 
     if (zoom >= 18) {
         var bounds = mymap.getBounds();
@@ -474,21 +476,16 @@ function addValues(values) {
         let thead = table.createTHead();
     let row = thead.insertRow();
     let th = document.createElement("th");
-
-    let button = document.createElement('INPUT');
-    button.setAttribute("type", "checkbox");
+	th.colSpan = 2
+	
+    let button = document.createElement('button');
+	button.textContent = "Value"
     button.id = 'toggle_value';
-    button.checked = true;
+    button.style.width = "100%"
     button.addEventListener("click", toggle);
     th.appendChild(button);
 
     row.appendChild(th);
-
-    let th2 = document.createElement("th");
-    let text = document.createTextNode("Value");
-    th2.appendChild(text);
-
-    row.appendChild(th2);
 
     for (let i = 0; i < scale; i += step) {
         let row = table.insertRow();
@@ -530,26 +527,21 @@ function addValues(values) {
 }
 
 const addZones = async(zones) => {
-    var table = document.getElementById('zones')
+    var table = document.getElementById('zones');
 
         let thead = table.createTHead();
     let row = thead.insertRow();
     let th = document.createElement("th");
-
-    let button = document.createElement('input');
-    button.setAttribute("type", "checkbox");
-    button.checked = true;
+	th.colSpan = 2;
+	
+    let button = document.createElement('button');
     button.id = 'toggle_zone';
+	button.textContent = "Zones"
+    button.style.width = "100%"
     button.addEventListener("click", toggle);
     th.appendChild(button);
 
     row.appendChild(th);
-
-    let th2 = document.createElement("th");
-    let text = document.createTextNode("Zoning");
-    th2.appendChild(text);
-
-    row.appendChild(th2);
 
     //    zones = zones.sort();
 
@@ -581,26 +573,20 @@ const addZones = async(zones) => {
 const addWards = async(wards) => {
     var table = document.getElementById('wards')
 
-        let thead = table.createTHead();
+    let thead = table.createTHead();
+	
     let row = thead.insertRow();
 
-    let button = document.createElement('input');
-    button.setAttribute("type", "checkbox");
-    button.checked = true;
+    let button = document.createElement('button');
+    button.textContent = 'Ward'
     button.id = 'toggle_ward';
     button.addEventListener("click", toggle);
 
     let th = document.createElement("th");
-
+	th.colSpan = 2;
     th.appendChild(button);
 
     row.appendChild(th);
-
-    let th2 = document.createElement("th");
-    let text = document.createTextNode("Wards");
-    th2.appendChild(text);
-
-    row.appendChild(th2);
 
     wards = wards.sort();
 
