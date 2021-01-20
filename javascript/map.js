@@ -547,8 +547,10 @@ function addValues(values) {
                 text = `${from} to ${to} (${count.toLocaleString()})`;
         }
 
-        let t = document.createTextNode(text);
-        c2.appendChild(t);
+		var label = document.createElement("Label");
+        label.htmlFor = `index_${(i/step)}`;
+        label.innerHTML = text;
+        c2.appendChild(label);
         row.appendChild(c2);
     }
 }
@@ -589,10 +591,12 @@ const addZones = async(zones) => {
 
         let c2 = document.createElement('td')
 
-            let text = `${zones[i].zone} (${zones[i].count.toLocaleString()})`; ;
+        let text = `${zones[i].zone} (${zones[i].count.toLocaleString()})`; ;
 
-        let t = document.createTextNode(text);
-        c2.appendChild(t);
+        var label = document.createElement("Label");
+        label.htmlFor = `zone_${i}`;
+        label.innerHTML = text;
+        c2.appendChild(label);
         row.appendChild(c2);
     }
 }
@@ -640,9 +644,12 @@ const addWards = async(wards) => {
 
         let c2 = document.createElement('td')
 
-            ward = ward ? ward : 'Blank';
-        let t = document.createTextNode(ward);
-        c2.appendChild(t);
+        ward = ward ? ward : 'Blank';
+		
+        var label = document.createElement("Label");
+        label.htmlFor = `ward_${i+1}`;
+        label.innerHTML = ward;
+        c2.appendChild(label);
         row.appendChild(c2);
     }
 }
