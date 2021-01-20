@@ -293,8 +293,10 @@ const load = async() => {
     let zones = [];
     let wards = [];
 
-    let length = addressRows.length;
     let json = '';
+
+    let length = addressRows.length;
+    
     for (let i = 0; i < length; i++) {
         var p = addressRows[i].split('\t');
         var a = {
@@ -429,11 +431,19 @@ const color = async() => {
 
         var polygon = L.polygon(cRev);
         var bounds = polygon.getBounds();
-        var center = bounds.getCenter();
 
         for (let i = 0; i < temp.length; i++) {
 
             var address = temp[i];
+
+	    // simple discard
+	    let corner1 = bounds.getSouthWest();
+	    let corner2 = bounds.getNorthEast();
+	    if(address.lat < corner1.lat || address.lat > corner2.lat || address.lon < corner1.lng || address.lon > corner2.lng)
+	    {
+		continue;
+	    }
+	    
             let a = L.latLng(address.lat, address.lon);
 
             if (bounds.contains(a)) {
