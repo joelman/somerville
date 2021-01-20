@@ -198,7 +198,7 @@ const draw = async() => {
 
     if (parcels) {
         log(`Parcels: ${parcels}`);
-        log(`Value: ${value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`)
+        // log(`Value: ${value.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}`)
     }
 }
 
@@ -435,9 +435,34 @@ const color = async() => {
 	let corner1 = bounds.getSouthWest();
 	let corner2 = bounds.getNorthEast();
 
+		// calculate interval as average of values
+		let values = [];
+
         for (let i = 0; i < temp.length; i++) {
 
             let address = temp[i];
+
+			if(layer.options.street && layer.options.number != address.number && layer.options.street != address.street) {
+									
+					let total = 0;
+					values.forEach(function(v) { total += v });
+					let average = total/values.length;
+					
+					layer.options.interval = 0;
+					for (var c = step; c < scale; c += step) {
+						if (average >= c) {
+							layer.options.interval++;
+						}
+					}
+		
+					var style = {
+						color: colors[layer.options.interval],
+						fillOpacity: .5
+					};
+					layer.setStyle(style);
+					
+					break;
+			}
 
 	    // simple discard
 	    if(address.lat < corner1.lat || address.lat > corner2.lat || address.lon < corner1.lng || address.lon > corner2.lng)
@@ -449,23 +474,14 @@ const color = async() => {
 
             if (bounds.contains(a)) {
 
-                var style = {
-                    color: colors[address.interval],
-                    fillOpacity: .5
-                };
-                layer.setStyle(style);
-
-                layer.options.value = address.value;
-                layer.options.parcel = address.parcel;
+				values.push(address.value);
+				
                 layer.options.street = address.street;
                 layer.options.number = address.number;
                 layer.options.ward = address.ward;
                 layer.options.zoning = address.zoning;
-                layer.options.interval = address.interval;
 
                 temp.splice(i, 1);
-
-                break;
             }
 
         }

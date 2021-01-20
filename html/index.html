@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <title>City of Somerville</title>
+  <title>City of Somerville Property Explorer</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
 	  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
 	  crossorigin=""/>
@@ -27,7 +27,7 @@
 		border-radius: .25em;
 	}
 	  
-      #mapid { width: 80em; height: 60em; display: inline-block; border: solid thin gray; margin-right: 1em; margin-bottom: 1em; border-radius: .25em; }
+      #mapid { width: 60em; height: 40em; display: inline-block; border: solid thin gray; margin-right: 1em; margin-bottom: 1em; border-radius: .25em; }
 	  
       .container {
 	  display: flex;
@@ -65,7 +65,7 @@
     </style>
   </head>
   <body>
-    <h1>City of Somerville</h1>
+    <h1>City of Somerville Property Explorer</h1>
 	<p>Zoom in and click on a parcel for more information.</p>
 	<div id="counter"></div>
 	<div class="container" id="mapContainer" style="display: flex">
@@ -79,6 +79,8 @@
 	  </div>
 	  <pre id="output"></pre>
       </div>
+	<p>
+	Data from the city of Somerville <a href="https://data.somervillema.gov/">Data Catalog</a>
     <p>
       <a href="mailto:joelman@gmail.com">[contact]</a>
     </p>
