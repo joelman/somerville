@@ -432,13 +432,14 @@ const color = async() => {
         var polygon = L.polygon(cRev);
         var bounds = polygon.getBounds();
 
+	let corner1 = bounds.getSouthWest();
+	let corner2 = bounds.getNorthEast();
+
         for (let i = 0; i < temp.length; i++) {
 
-            var address = temp[i];
+            let address = temp[i];
 
 	    // simple discard
-	    let corner1 = bounds.getSouthWest();
-	    let corner2 = bounds.getNorthEast();
 	    if(address.lat < corner1.lat || address.lat > corner2.lat || address.lon < corner1.lng || address.lon > corner2.lng)
 	    {
 		continue;
