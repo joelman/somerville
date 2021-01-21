@@ -24,7 +24,7 @@ mymap.on('zoomend', function () {
         }
     }
 
-	labels = [];
+    labels = [];
 
     if (zoom >= 18) {
         var bounds = mymap.getBounds();
@@ -296,7 +296,7 @@ const load = async() => {
     let json = '';
 
     let length = addressRows.length;
-    
+
     for (let i = 0; i < length; i++) {
         var p = addressRows[i].split('\t');
         var a = {
@@ -432,51 +432,52 @@ const color = async() => {
         var polygon = L.polygon(cRev);
         var bounds = polygon.getBounds();
 
-	let corner1 = bounds.getSouthWest();
-	let corner2 = bounds.getNorthEast();
+        let corner1 = bounds.getSouthWest();
+        let corner2 = bounds.getNorthEast();
 
-		// calculate interval as average of values
-		let values = [];
+        // calculate interval as average of values
+        let values = [];
 
         for (let i = 0; i < temp.length; i++) {
 
             let address = temp[i];
 
-			// addresses are sorted by number and name, so if we get to the end, calculate average value, and move on.
-			if(layer.options.street && layer.options.number != address.number && layer.options.street != address.street) {
-									
-					let total = 0;
-					values.forEach(function(v) { total += v });
-					let average = total/values.length;
-					
-					layer.options.interval = 0;
-					for (var c = step; c < scale; c += step) {
-						if (average >= c) {
-							layer.options.interval++;
-						}
-					}
-		
-					var style = {
-						color: colors[layer.options.interval],
-						fillOpacity: .5
-					};
-					layer.setStyle(style);
-					
-					break;
-			}
+            // addresses are sorted by number and name, so if we get to the end, calculate average value, and move on.
+            if (layer.options.street && layer.options.number != address.number && layer.options.street != address.street) {
 
-	    // simple discard
-	    if(address.lat < corner1.lat || address.lat > corner2.lat || address.lon < corner1.lng || address.lon > corner2.lng)
-	    {
-		continue;
-	    }
-	    
+                let total = 0;
+                values.forEach(function (v) {
+                    total += v
+                });
+                let average = total / values.length;
+
+                layer.options.interval = 0;
+                for (var c = step; c < scale; c += step) {
+                    if (average >= c) {
+                        layer.options.interval++;
+                    }
+                }
+
+                var style = {
+                    color: colors[layer.options.interval],
+                    fillOpacity: .5
+                };
+                layer.setStyle(style);
+
+                break;
+            }
+
+            // simple discard
+            if (address.lat < corner1.lat || address.lat > corner2.lat || address.lon < corner1.lng || address.lon > corner2.lng) {
+                continue;
+            }
+
             let a = L.latLng(address.lat, address.lon);
 
             if (bounds.contains(a)) {
 
-				values.push(address.value);
-				
+                values.push(address.value);
+
                 layer.options.street = address.street;
                 layer.options.number = address.number;
                 layer.options.ward = address.ward;
@@ -504,13 +505,13 @@ function addValues(values) {
         let thead = table.createTHead();
     let row = thead.insertRow();
     let th = document.createElement("th");
-	th.colSpan = 2
-	
-    let button = document.createElement('button');
-	button.textContent = "Assessed Value (k)"
-    button.id = 'toggle_value';
+    th.colSpan = 2
+
+        let button = document.createElement('button');
+    button.textContent = "Assessed Value (k)"
+        button.id = 'toggle_value';
     button.style.width = "100%"
-    button.addEventListener("click", toggle);
+        button.addEventListener("click", toggle);
     th.appendChild(button);
 
     row.appendChild(th);
@@ -537,12 +538,12 @@ function addValues(values) {
         if (i == scale - step) {
             text = `$${(i/1000).toLocaleString('en-US')} and over (${count.toLocaleString()})`;
         } else {
-            var from = (i/1000).toLocaleString('en-US')
-                var to = ((i + step)/1000).toLocaleString('en-US');
-                text = `$${from} to $${to} (${count.toLocaleString()})`;
+            var from = (i / 1000).toLocaleString('en-US')
+            var to = ((i + step) / 1000).toLocaleString('en-US');
+            text = `$${from} to $${to} (${count.toLocaleString()})`;
         }
 
-		var label = document.createElement("Label");
+        var label = document.createElement("Label");
         label.htmlFor = `index_${(i/step)}`;
         label.innerHTML = text;
         c2.appendChild(label);
@@ -553,16 +554,16 @@ function addValues(values) {
 const addZones = async(zones) => {
     var table = document.getElementById('zones');
 
-        let thead = table.createTHead();
+    let thead = table.createTHead();
     let row = thead.insertRow();
     let th = document.createElement("th");
-	th.colSpan = 2;
-	
+    th.colSpan = 2;
+
     let button = document.createElement('button');
     button.id = 'toggle_zone';
-	button.textContent = "Zoning"
-    button.style.width = "100%"
-    button.addEventListener("click", toggle);
+    button.textContent = "Zoning"
+        button.style.width = "100%"
+        button.addEventListener("click", toggle);
     th.appendChild(button);
 
     row.appendChild(th);
@@ -586,7 +587,7 @@ const addZones = async(zones) => {
 
         let c2 = document.createElement('td')
 
-        let text = `${zones[i].zone} (${zones[i].count.toLocaleString()})`; ;
+            let text = `${zones[i].zone} (${zones[i].count.toLocaleString()})`; ;
 
         var label = document.createElement("Label");
         label.htmlFor = `zone_${i}`;
@@ -599,17 +600,17 @@ const addZones = async(zones) => {
 const addWards = async(wards) => {
     var table = document.getElementById('wards')
 
-    let thead = table.createTHead();
-	
+        let thead = table.createTHead();
+
     let row = thead.insertRow();
 
     let button = document.createElement('button');
     button.textContent = 'Ward'
-    button.id = 'toggle_ward';
+        button.id = 'toggle_ward';
     button.addEventListener("click", toggle);
 
     let th = document.createElement("th");
-	th.colSpan = 2;
+    th.colSpan = 2;
     th.appendChild(button);
 
     row.appendChild(th);
@@ -639,8 +640,8 @@ const addWards = async(wards) => {
 
         let c2 = document.createElement('td')
 
-        ward = ward ? ward : 'Blank';
-		
+            ward = ward ? ward : 'Blank';
+
         var label = document.createElement("Label");
         label.htmlFor = `ward_${i+1}`;
         label.innerHTML = ward;
@@ -659,20 +660,6 @@ function log(message) {
 load().then(
     setTimeout(function () {
         color()
-}, 0)
-);
+    }, 0));
 
 let end = new Date;
-
-/*
-['mapContainer', 'controls'].forEach(function(id) {
-let element = document.getElementById(id);
-let style = getComputedStyle(element)
-console.log('display: ' + style.display);
-if (style.display === "none") {
-element.style.display = "flex";
-} else {
-element.style.display = "none";
-}
-});
- */
