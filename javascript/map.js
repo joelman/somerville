@@ -1,6 +1,6 @@
 let start = new Date
 
-    var mymap = L.map('mapid').setView([42.3949919, -71.1045912], 14);
+    var mymap = L.map('mapid').setView([42.3949919, -71.1045912], 13);
 
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery &copy; <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -442,6 +442,7 @@ const color = async() => {
 
             let address = temp[i];
 
+			// addresses are sorted by number and name, so if we get to the end, calculate average value, and move on.
 			if(layer.options.street && layer.options.number != address.number && layer.options.street != address.street) {
 									
 					let total = 0;
@@ -506,7 +507,7 @@ function addValues(values) {
 	th.colSpan = 2
 	
     let button = document.createElement('button');
-	button.textContent = "Value"
+	button.textContent = "Assessed Value (k)"
     button.id = 'toggle_value';
     button.style.width = "100%"
     button.addEventListener("click", toggle);
@@ -534,17 +535,11 @@ function addValues(values) {
             let text = '';
         let count = values[i / step];
         if (i == scale - step) {
-            text = `${i.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} and over (${count.toLocaleString()})`;
+            text = `$${(i/1000).toLocaleString('en-US')} and over (${count.toLocaleString()})`;
         } else {
-            var from = i.toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            })
-                var to = (i + step).toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            })
-                text = `${from} to ${to} (${count.toLocaleString()})`;
+            var from = (i/1000).toLocaleString('en-US')
+                var to = ((i + step)/1000).toLocaleString('en-US');
+                text = `$${from} to $${to} (${count.toLocaleString()})`;
         }
 
 		var label = document.createElement("Label");
@@ -565,7 +560,7 @@ const addZones = async(zones) => {
 	
     let button = document.createElement('button');
     button.id = 'toggle_zone';
-	button.textContent = "Zones"
+	button.textContent = "Zoning"
     button.style.width = "100%"
     button.addEventListener("click", toggle);
     th.appendChild(button);
@@ -662,9 +657,9 @@ function log(message) {
 }
 
 load().then(
-//    setTimeout(function () {
+    setTimeout(function () {
         color()
-//}, 0)
+}, 0)
 );
 
 let end = new Date;
